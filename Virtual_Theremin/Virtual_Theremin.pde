@@ -18,7 +18,8 @@ void setup() {
       println(cameras[i]);
     }
 
-    cam = new Capture(this, cameras[0]);
+    //cam = new Capture(this, cameras[0]);
+    cam = new Capture(this, 640, 480, 30);
     cam.start();     
   }      
 }
