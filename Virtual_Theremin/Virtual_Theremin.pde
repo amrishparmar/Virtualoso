@@ -3,8 +3,14 @@ import processing.video.*;
 
 Capture cam;
 
-PVector amp;
-PVector freq;
+AudioThread audioThread;
+
+PVector ampPos;
+PVector freqPos;
+
+float amp;
+float freq;
+float phase;
 
 float up, down, left, right;
 
@@ -28,8 +34,13 @@ void setup() {
     cam.start();     
   }
 
-  amp = new PVector(width/2, height - 50);
-  freq = new PVector(width - 50, height/2);      
+  ampPos = new PVector(width/2, height - 50);
+  freqPos = new PVector(width - 50, height/2);
+
+  freq = freqPos.y;
+  phase = 0;
+  audioThread = new AudioThread();
+  audioThread.start();      
 }
 
 void draw() {
@@ -41,6 +52,9 @@ void draw() {
   drawStats();
   drawTrackers();
   moveTrackers();
+
+  freq = abs(freqPos.y - height);
+  amp = ampPos.x;
 }
 
 void drawStats() {
@@ -50,9 +64,9 @@ void drawStats() {
   text("FPS: "+frameRate, 10, 20);
 
   // x pos
-  text("X: "+amp.x, 10, 40);
+  text("X: "+ampPos.x, 10, 40);
   // y pos
-  text("Y: "+freq.y, 10, 60);
+  text("Y: "+freqPos.y, 10, 60);
 }
 
 void drawTrackers() {
@@ -64,21 +78,44 @@ void drawTrackers() {
   fill(255, 0, 0);
   stroke(0);
   strokeWeight(5);
-  ellipse(amp.x, amp.y, 40, 40);
+  ellipse(ampPos.x, ampPos.y, 40, 40);
 
   // y pos
   fill(255, 0, 0);
   stroke(0);
   strokeWeight(5);
-  ellipse(freq.x, freq.y, 40, 40);
+  ellipse(freqPos.x, freqPos.y, 40, 40);
 }
 
 void moveTrackers() {
-  amp.x += (right - left) * 5;
-  freq.y += (down - up) * 5;
+  ampPos.x += (right - left) * 5;
+  freqPos.y += (down - up) * 5;
 
-  amp.x = constrain(amp.x, 20, width - 20);
-  freq.y = constrain(freq.y, 20, height - 20);
+  ampPos.x = constrain(ampPos.x, 20, width - 20);
+  freqPos.y = constrain(freqPos.y, 20, height - 20);
+}
+
+// this function gets called when you press the escape key in the sketch
+void stop(){
+  // tell the audio to stop
+  audioThread.quit();
+  // call the version of stop defined in our parent class, in case it does anything vital
+  super.stop();
+}
+
+// this gets called by the audio thread when it wants some audio
+// we should fill the sent buffer with the audio we want to send to the 
+// audio output
+void generateAudioOut(float[] buffer){
+  for (int i = 0; i < buffer.length; i++){
+    buffer[i] = 0;
+    // generate white noise
+    for (float partial = 0; partial < 10; partial++){
+      buffer[i] += sin(TWO_PI / 44100 * phase * freq);
+      buffer[i] *= 0.1;
+      phase = (phase + 1) % 44100;      
+    }
+  }
 }
 
 void keyPressed() {
