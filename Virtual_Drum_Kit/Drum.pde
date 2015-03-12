@@ -19,11 +19,12 @@ class Drum {
   }
 
   void checkColl(ColourTracker tracker) {
-    if (tracker.position.x > position.x && tracker.position.x < position.x+width && tracker.position.y > position.y && tracker.position.y 
-      < position.y+height) {
-      float velocity = tracker.position.dist(tracker.erstwhilePosition);
-      sound.play();
-      println("Drum Hit " + ident  + velocity);
+    if (tracker.position.x > position.x && tracker.position.x < position.x+width && tracker.position.y > position.y && tracker.position.y < position.y+height) {
+      if ((tracker.erstwhilePosition.x > position.x && tracker.erstwhilePosition.x < position.x+this.width && tracker.erstwhilePosition.y > position.y && tracker.erstwhilePosition.y < position.y+height) == false) {
+        float velocity = tracker.position.dist(tracker.erstwhilePosition);
+        sound.play(0);
+        println("Drum Hit " + ident  + velocity);
+      }
     }
   }
 }

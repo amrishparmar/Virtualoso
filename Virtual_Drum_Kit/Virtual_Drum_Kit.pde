@@ -16,7 +16,11 @@ void setup() {
   if (cameras.length == 0) {
     println("There are no cameras available for capture.");
     exit();
-  } 
+  } else {
+    for (int i = 0; i < cameras.length; i++) {
+      println(cameras[i]);
+    }
+  }
   cam = new Capture(this, 640, 480, 30);
   cam.start();
   trackerOne = new ColourTracker('a');
@@ -38,11 +42,8 @@ void draw() {
 
   popMatrix();
   text(frameRate, 10, 10);
-
-  trackerOne.updatePosition();
-  trackerOne.displayTracker();
-  trackerTwo.updatePosition();
-  trackerTwo.displayTracker();
+  trackerOne.track();
+  trackerTwo.track();
   drumkit.drawKit();
   drumkit.checkForHit(trackerOne);
   // drumkit.checkForHit(trackerTwo);

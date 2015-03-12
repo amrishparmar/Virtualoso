@@ -11,7 +11,7 @@ class DrumKit {
     drums[3] = new Drum(440, 380, 100, 50, 'd', "data/FloorTom.wav");
     cymbals[0] = new Cymbal( 10, 300, 80, 20, 'a', "data/HiHat.wav");
     cymbals[1] = new Cymbal( 280, 300, 80, 20, 'b', "data/Ride.wav");
-    cymbals[2] = new Cymbal( 530, 300, 80, 20, 'c', "data/Snare.wav");
+    cymbals[2] = new Cymbal( 530, 300, 80, 20, 'c', "data/Crash.wav");
   }
 
   void drawKit() {
