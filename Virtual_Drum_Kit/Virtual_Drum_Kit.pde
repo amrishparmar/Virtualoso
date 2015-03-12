@@ -1,12 +1,17 @@
 import processing.video.*;
+import ddf.minim.*;
+
 Capture cam;
 ColourTracker trackerOne;
 ColourTracker trackerTwo;
 DrumKit drumkit;
+Minim minim;
+
 
 void setup() {
   size(640, 480);
   frameRate(30);
+  minim = new Minim(this);
   String[] cameras = Capture.list();
   if (cameras.length == 0) {
     println("There are no cameras available for capture.");
