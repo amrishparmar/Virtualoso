@@ -1,5 +1,5 @@
 import processing.video.*;
-Capture video;
+Capture cam;
 ColourTracker trackerOne;
 ColourTracker trackerTwo;
 DrumKit drumkit;
@@ -7,8 +7,13 @@ DrumKit drumkit;
 void setup() {
   size(640, 480);
   frameRate(30);
-  video = new Capture(this, width, height);
-  video.start();
+  String[] cameras = Capture.list();
+  if (cameras.length == 0) {
+    println("There are no cameras available for capture.");
+    exit();
+  } 
+  cam = new Capture(this, 640, 480, 30);
+  cam.start();
   trackerOne = new ColourTracker('a');
   trackerTwo = new ColourTracker('s');
   drumkit = new DrumKit();
@@ -16,16 +21,16 @@ void setup() {
 }
 void draw() {
   // Capture and display the video
-  if (video.available()) {
-    video.read();
+  if (cam.available()) {
+    cam.read();
   }
   fill(255);
-  
-  video.loadPixels();
+
+  cam.loadPixels();
   pushMatrix();
-  scale(-1,1);
-  image(video, -width, 0);
-  
+  scale(-1, 1);
+  image(cam, -width, 0);
+
   popMatrix();
   text(frameRate, 10, 10);
 
@@ -35,7 +40,7 @@ void draw() {
   trackerTwo.displayTracker();
   drumkit.drawKit();
   drumkit.checkForHit(trackerOne);
- // drumkit.checkForHit(trackerTwo);
+  // drumkit.checkForHit(trackerTwo);
 }
 
 void keyPressed() {

@@ -18,11 +18,11 @@ class ColourTracker {
     int closestY = 0;
 
     // Begin loop to walk through every pixel
-    for (int x = 0; x < video.width; x ++ ) {
-      for (int y = 0; y < video.height; y ++ ) {
-        int loc = x + y*video.width;
+    for (int x = 0; x < cam.width; x ++ ) {
+      for (int y = 0; y < cam.height; y ++ ) {
+        int loc = x + y*cam.width;
         // What is current color
-        color currentColor = video.pixels[loc];
+        color currentColor = cam.pixels[loc];
         float r1 = red(currentColor);
         float g1 = green(currentColor);
         float b1 = blue(currentColor);
@@ -55,8 +55,8 @@ class ColourTracker {
   }
 
   void setTracker() {
-    int loc = (width-mouseX) + mouseY*(video.width);
-    trackingColour = video.pixels[loc];
+    int loc = (width-mouseX) + mouseY*(cam.width);
+    trackingColour = cam.pixels[loc];
     position = new PVector(mouseX, mouseY);
   }
 }
