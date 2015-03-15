@@ -9,6 +9,11 @@ class ColourTracker {
     updateKey = key;
   }
 
+  void track() {
+    updatePosition();
+    displayTracker();
+  }
+
   void updatePosition() {
     // Before we begin searching, the "world record" for closest color is set to a high number that is easy for the first pixel to beat.
     float worldRecord = 500; 
@@ -60,4 +65,3 @@ class ColourTracker {
     position = new PVector(mouseX, mouseY);
   }
 }
-
