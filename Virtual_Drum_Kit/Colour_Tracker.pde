@@ -3,15 +3,19 @@ class ColourTracker {
   PVector position;
   PVector erstwhilePosition;
   char updateKey;
+  boolean setUp;
 
   ColourTracker(char key) {
     setTracker();
     updateKey = key;
+    setUp = false;
   }
 
   void track() {
-    updatePosition();
-    displayTracker();
+    if (setUp) {
+      updatePosition();
+      displayTracker();
+    }
   }
 
   void updatePosition() {
@@ -63,5 +67,6 @@ class ColourTracker {
     int loc = (width-mouseX) + mouseY*(cam.width);
     trackingColour = cam.pixels[loc];
     position = new PVector(mouseX, mouseY);
+    setUp = true;
   }
 }

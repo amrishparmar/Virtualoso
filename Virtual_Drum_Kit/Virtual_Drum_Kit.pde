@@ -26,7 +26,6 @@ void setup() {
   trackerOne = new ColourTracker('a');
   trackerTwo = new ColourTracker('s');
   drumkit = new DrumKit();
-  smooth();
 }
 void draw() {
   // Capture and display the video
@@ -45,8 +44,12 @@ void draw() {
   trackerOne.track();
   trackerTwo.track();
   drumkit.drawKit();
-  drumkit.checkForHit(trackerOne);
-  // drumkit.checkForHit(trackerTwo);
+  if (trackerOne.setUp) {
+    drumkit.checkForHit(trackerOne);
+  }
+  if (trackerTwo.setUp) {
+    drumkit.checkForHit(trackerTwo);
+  }
 }
 
 void keyPressed() {
