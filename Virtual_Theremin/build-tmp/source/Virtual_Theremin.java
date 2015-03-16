@@ -23,9 +23,12 @@ public class Virtual_Theremin extends PApplet {
 
 
 
+AudioThread audioThread;
+
 Capture cam;
 
-AudioThread audioThread;
+ColourTracker trackerOne;
+ColourTracker trackerTwo;
 
 PVector ampPos;
 PVector freqPos;
@@ -38,9 +41,6 @@ float targetAmplitude;
 
 // stores whether a number represented whether the key is pressed or not
 float up, down, left, right;
-
-ColourTracker trackerOne;
-ColourTracker trackerTwo;
 
 public void setup() {
   size(640, 480);
@@ -103,12 +103,12 @@ public void draw() {
   trackerTwo.track();
 
   // change the frequency and amplitude to that of the markers - keyboard controls
-  targetFrequency = map(abs(freqPos.y - height), 0, height, 300, 1000);
-  targetAmplitude = map(ampPos.x, 0, width, 0, 100);
+  //targetFrequency = map(abs(freqPos.y - height), 0, height, 300, 1000);
+  //targetAmplitude = map(ampPos.x, 0, width, 0, 1);
 
   // change the frequency and amplitude to that of the markers - colour tracking controls
-  //targetFrequency = abs(trackerOne.position.y - height);
-  //targetAmplitude = map(trackerTwo.position.x, 0, width, 0, 100);
+  targetFrequency = abs(trackerOne.position.y - height);
+  targetAmplitude = map(trackerTwo.position.x, 0, width, 0, 1);
 }
 
 // draw testing stats on screen
@@ -119,11 +119,11 @@ public void drawStats() {
   text("FPS: "+frameRate, 10, 20);
 
   // x pos
-  text("X: "+ampPos.x, 10, 40);
-  //text("X: "+trackerTwo.position.x, 10, 40);
+  //text("X: "+ampPos.x, 10, 40);
+  text("X: "+trackerTwo.position.x, 10, 40);
   // y pos
-  text("Y: "+freqPos.y, 10, 60);
-  //text("Y: "+trackerOne.position.y, 10, 60);
+  //text("Y: "+freqPos.y, 10, 60);
+  text("Y: "+trackerOne.position.y, 10, 60);
 }
 
 // draw markers to the screen
@@ -146,8 +146,8 @@ public void moveTrackers() {
   ampPos.x += (right - left) * 5;
   freqPos.y += (down - up) * 5;
 
-  ampPos.x = constrain(ampPos.x, 20, width - 20);
-  freqPos.y = constrain(freqPos.y, 20, height - 20);
+  ampPos.x = constrain(ampPos.x, 0, width);
+  freqPos.y = constrain(freqPos.y, 0, height);
 }
 
 // this function gets called when you press the escape key in the sketch
@@ -164,7 +164,7 @@ public void stop() {
 public void generateAudioOut(float[] buffer) {
   for (int i = 0; i < buffer.length; ++i) {
     // generate white noise
-    buffer[i] = 0.01f * targetAmplitude * sin(phase);
+    buffer[i] = targetAmplitude * sin(phase);
     phase += dPhase;
     if (frequency < targetFrequency) {
       frequency += 0.01f;

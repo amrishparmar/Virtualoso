@@ -1,8 +1,11 @@
 import processing.video.*;
 
+AudioThread audioThread;
+
 Capture cam;
 
-AudioThread audioThread;
+ColourTracker trackerOne;
+ColourTracker trackerTwo;
 
 PVector ampPos;
 PVector freqPos;
@@ -15,9 +18,6 @@ float targetAmplitude;
 
 // stores whether a number represented whether the key is pressed or not
 float up, down, left, right;
-
-ColourTracker trackerOne;
-ColourTracker trackerTwo;
 
 void setup() {
   size(640, 480);
@@ -76,16 +76,16 @@ void draw() {
   drawStats();
   drawTrackers();
   moveTrackers();
-  //trackerOne.track();
-  //trackerTwo.track();
+  trackerOne.track();
+  trackerTwo.track();
 
   // change the frequency and amplitude to that of the markers - keyboard controls
-  targetFrequency = map(abs(freqPos.y - height), 0, height, 300, 1000);
-  targetAmplitude = map(ampPos.x, 0, width, 0, 100);
+  //targetFrequency = map(abs(freqPos.y - height), 0, height, 300, 1000);
+  //targetAmplitude = map(ampPos.x, 0, width, 0, 1);
 
   // change the frequency and amplitude to that of the markers - colour tracking controls
-  //targetFrequency = abs(trackerOne.position.y - height);
-  //targetAmplitude = map(trackerTwo.position.x, 0, width, 0, 100);
+  targetFrequency = abs(trackerOne.position.y - height);
+  targetAmplitude = map(trackerTwo.position.x, 0, width, 0, 1);
 }
 
 // draw testing stats on screen
@@ -96,11 +96,11 @@ void drawStats() {
   text("FPS: "+frameRate, 10, 20);
 
   // x pos
-  text("X: "+ampPos.x, 10, 40);
-  //text("X: "+trackerTwo.position.x, 10, 40);
+  //text("X: "+ampPos.x, 10, 40);
+  text("X: "+trackerTwo.position.x, 10, 40);
   // y pos
-  text("Y: "+freqPos.y, 10, 60);
-  //text("Y: "+trackerOne.position.y, 10, 60);
+  //text("Y: "+freqPos.y, 10, 60);
+  text("Y: "+trackerOne.position.y, 10, 60);
 }
 
 // draw markers to the screen
@@ -141,7 +141,7 @@ void stop() {
 void generateAudioOut(float[] buffer) {
   for (int i = 0; i < buffer.length; ++i) {
     // generate white noise
-    buffer[i] = 0.01 * targetAmplitude * sin(phase);
+    buffer[i] = targetAmplitude * sin(phase);
     phase += dPhase;
     if (frequency < targetFrequency) {
       frequency += 0.01;
