@@ -21,7 +21,6 @@ import java.io.IOException;
 
 public class Virtual_Theremin extends PApplet {
 
-  
 
 
 Capture cam;
@@ -31,22 +30,29 @@ AudioThread audioThread;
 PVector ampPos;
 PVector freqPos;
 
-float amp;
-float freq;
 float phase;
+float frequency;
+float dPhase;
+float targetFrequency;
+float targetAmplitude;
 
+// stores whether a number represented whether the key is pressed or not
 float up, down, left, right;
+
+ColourTracker trackerOne;
+ColourTracker trackerTwo;
 
 public void setup() {
   size(640, 480);
 
+  // get list of cameras
   String[] cameras = Capture.list();
-  
+
+  // quit program if there are no cameras available
   if (cameras.length == 0) {
     println("There are no cameras available for capture.");
     exit();
-  } 
-  else {
+  } else {
     println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
       println(cameras[i]);
@@ -54,32 +60,58 @@ public void setup() {
 
     //cam = new Capture(this, cameras[0]);
     cam = new Capture(this, 640, 480, 30);
-    cam.start();     
+    cam.start();
   }
 
+  // create vectors to represent position of markers on screen
   ampPos = new PVector(width/2, height - 50);
   freqPos = new PVector(width - 50, height/2);
 
-  freq = freqPos.y;
+  // default initial values
+  frequency = freqPos.y;
   phase = 0;
+  dPhase = calcDPhase(frequency, 44100);
+
+  trackerOne = new ColourTracker('1');
+  trackerTwo = new ColourTracker('2');
+
   audioThread = new AudioThread();
-  audioThread.start();      
+  audioThread.start();
+}
+
+// calculate phase
+public float calcDPhase(float freq, float sampleRate) {
+  return (freq * 2.0f/sampleRate * PI);
 }
 
 public void draw() {
+  // read data from camera and display on screen
   if (cam.available() == true) {
     cam.read();
   }
-  image(cam, 0, 0);
-  
+  cam.loadPixels();
+  // reverse the image so it acts like a mirror
+  pushMatrix();
+  scale(-1, 1);
+  image(cam, -width, 0);
+  popMatrix();
+
   drawStats();
   drawTrackers();
   moveTrackers();
+  trackerOne.track();
+  trackerTwo.track();
 
-  freq = abs(freqPos.y - height);
-  amp = ampPos.x;
+  // change the frequency and amplitude to that of the markers - keyboard controls
+  targetFrequency = map(abs(freqPos.y - height), 0, height, 300, 1000);
+  targetAmplitude = map(ampPos.x, 0, width, 0, 100);
+
+  // change the frequency and amplitude to that of the markers - colour tracking controls
+  //targetFrequency = abs(trackerOne.position.y - height);
+  //targetAmplitude = map(trackerTwo.position.x, 0, width, 0, 100);
 }
 
+// draw testing stats on screen
 public void drawStats() {
   // fps count
   fill(0);
@@ -88,15 +120,14 @@ public void drawStats() {
 
   // x pos
   text("X: "+ampPos.x, 10, 40);
+  //text("X: "+trackerTwo.position.x, 10, 40);
   // y pos
   text("Y: "+freqPos.y, 10, 60);
+  //text("Y: "+trackerOne.position.y, 10, 60);
 }
 
+// draw markers to the screen
 public void drawTrackers() {
-  // mouse pos
-  fill(255, 255, 0);
-  ellipse(mouseX, mouseY, 20, 20);
-
   // x pos
   fill(255, 0, 0);
   stroke(0);
@@ -110,6 +141,7 @@ public void drawTrackers() {
   ellipse(freqPos.x, freqPos.y, 40, 40);
 }
 
+// move the trackers based on the keys pressed
 public void moveTrackers() {
   ampPos.x += (right - left) * 5;
   freqPos.y += (down - up) * 5;
@@ -119,7 +151,7 @@ public void moveTrackers() {
 }
 
 // this function gets called when you press the escape key in the sketch
-public void stop(){
+public void stop() {
   // tell the audio to stop
   audioThread.quit();
   // call the version of stop defined in our parent class, in case it does anything vital
@@ -129,22 +161,26 @@ public void stop(){
 // this gets called by the audio thread when it wants some audio
 // we should fill the sent buffer with the audio we want to send to the 
 // audio output
-public void generateAudioOut(float[] buffer){
-  for (int i = 0; i < buffer.length; i++){
-    buffer[i] = 0;
+public void generateAudioOut(float[] buffer) {
+  for (int i = 0; i < buffer.length; ++i) {
     // generate white noise
-    for (float partial = 0; partial < 10; partial++){
-      buffer[i] += sin(TWO_PI / 44100 * phase * freq);
-      buffer[i] *= 5;
-      phase = (phase + 1) % 44100;      
+    buffer[i] = 0.01f * targetAmplitude * sin(phase);
+    phase += dPhase;
+    if (frequency < targetFrequency) {
+      frequency += 0.01f;
     }
+    if (frequency > targetFrequency) {
+      frequency -= 0.01f;
+    }
+    dPhase = calcDPhase(frequency, 44100);
   }
 }
 
+// set variable for movement
 public void keyPressed() {
   if (key == CODED) {
     if (keyCode == LEFT) {
-      left = 1; 
+      left = 1;
     }
     if (keyCode == RIGHT) {
       right = 1;
@@ -156,8 +192,14 @@ public void keyPressed() {
       down = 1;
     }
   }
+  if (key == trackerOne.updateKey) {
+    trackerOne.setTracker();
+  } else if (key == trackerTwo.updateKey) {
+    trackerTwo.setTracker();
+  }
 }
 
+// unset variable for movement
 public void keyReleased() {
   if (key == CODED) {
     if (keyCode == LEFT) {
@@ -174,6 +216,7 @@ public void keyReleased() {
     }
   }
 }
+
 /*
  *  This file has been adapted from 
  * https://github.com/mhroth/jvsthost/blob/master/src/com/synthbot/audioio/vst/JVstAudioThread.java
@@ -311,6 +354,73 @@ class AudioThread extends Thread {
   }
   
   
+}
+class ColourTracker {
+  int trackingColour; 
+  PVector position;
+  PVector erstwhilePosition;
+  char updateKey;
+
+  ColourTracker(char key) {
+    setTracker();
+    updateKey = key;
+  }
+
+  public void track() {
+    updatePosition();
+    displayTracker();
+  }
+
+  public void updatePosition() {
+    // Before we begin searching, the "world record" for closest color is set to a high number that is easy for the first pixel to beat.
+    float worldRecord = 500; 
+
+    // XY coordinate of closest color
+    int closestX = 0;
+    int closestY = 0;
+
+    // Begin loop to walk through every pixel
+    for (int x = 0; x < cam.width; x ++ ) {
+      for (int y = 0; y < cam.height; y ++ ) {
+        int loc = x + y*cam.width;
+        // What is current color
+        int currentColor = cam.pixels[loc];
+        float r1 = red(currentColor);
+        float g1 = green(currentColor);
+        float b1 = blue(currentColor);
+        float r2 = red(trackingColour);
+        float g2 = green(trackingColour);
+        float b2 = blue(trackingColour);
+
+        // Using euclidean distance to compare colors
+        float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function
+        // to compare the current color with the color we are tracking.
+
+        // If current color is more similar to tracked color than
+        // closest color, save current location and current difference
+        if (d < worldRecord) {
+          worldRecord = d;
+          closestX = x;
+          closestY = y;
+        }
+      }
+    }
+    if (worldRecord < 10) {
+      erstwhilePosition = position;
+      position = new PVector(width-closestX, closestY);
+    }
+  }
+
+  public void displayTracker() {
+    fill(trackingColour);
+    ellipse(position.x, position.y, 5, 5);
+  }
+
+  public void setTracker() {
+    int loc = (width-mouseX) + mouseY*(cam.width);
+    trackingColour = cam.pixels[loc];
+    position = new PVector(mouseX, mouseY);
+  }
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Virtual_Theremin" };
