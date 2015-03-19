@@ -6,6 +6,7 @@ class Button {
   float hei;
   String label;
   
+  // constructor
   Button(float cx, float cy, float w, float h, String l) {
     posX = cx;
     posY = cy;
@@ -20,12 +21,14 @@ class Button {
     stroke(lineCol);
     textAlign(CENTER, CENTER);
     textSize(hei-35);
+    // reverse the colours if the mouse is over the button
     if (mouseX > posX - wid/2 && mouseX < posX + wid/2 && mouseY > posY - hei/2 && mouseY < posY + hei/2) {
       fill(lineCol);
       rect(posX, posY, wid, hei);
       fill(bgCol); 
       text(label, posX, posY);
     }
+    // draw normally
     else {
       fill(bgCol);
       rect(posX, posY, wid, hei);

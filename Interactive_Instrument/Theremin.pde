@@ -1,15 +1,18 @@
 class Theremin {
+  
   AudioOutput out;
   Oscil wave;
   float targetFrequency;
   float targetAmplitude;
   
+  // constructor
   Theremin() {
     // create a sine wave Oscil and patch to output - from http://code.compartmental.net/minim/audiooutput_class_audiooutput.html
     out = minim.getLineOut();
     wave = new Oscil(440, 0.5f, Waves.SINE);
     wave.patch(out);
     
+    // set some default values
     targetFrequency = 440;
     targetAmplitude = 0.5;
   }

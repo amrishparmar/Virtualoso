@@ -8,6 +8,13 @@ void drawMenu() {
   selectT.drawButton(color(0), color(255));
 }
 
+// draw wizard instructions for theremin
+void drawInstructionsT() {
+  textSize(24);
+  text("Press A to set volume tracker", width/2, 25);
+  text("Press F to set pitch tracker", width/2, 50);
+}
+
 // draws webcam to the screen
 void drawCam() {
   // reverse the image so it acts like a mirror
@@ -24,7 +31,6 @@ void drawStats() {
   textSize(20);
   textAlign(LEFT);
   text("FPS: "+frameRate, 10, 20);
-
   // x pos
   text("X: "+amplitude.position.x, 10, 40);
   // y pos

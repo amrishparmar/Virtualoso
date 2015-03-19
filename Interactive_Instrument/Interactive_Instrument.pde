@@ -24,6 +24,10 @@ final int IN_PROGRAM = 2;
 final int THEREMIN = 0;
 final int DRUMS = 1;
 
+// monitor whether the wizard has been completed
+boolean fTracked = false;
+boolean aTracked = false;
+
 Button selectD;
 Button selectT;
 
@@ -81,8 +85,17 @@ void draw() {
       frequency.track();
       amplitude.track();
       
-      // update the pitch and volume based on position of colour trackers
-      theremin.updateSound(frequency, amplitude);
+      if (state == TRACK_WIZARD) {
+        drawInstructionsT();
+        if (aTracked && fTracked) {
+          state = IN_PROGRAM;
+          theremin = new Theremin(); // instantiate the theremin
+        }
+      }
+      else if (state == IN_PROGRAM) {
+        // update the pitch and volume based on position of colour trackers
+        theremin.updateSound(frequency, amplitude);
+      }
     }
     else { // drums
       // code for drum kit goes here
@@ -95,9 +108,11 @@ void keyPressed() {
   if (state > 0 && app == THEREMIN) {
     if (key == frequency.updateKey) {
       frequency.setTracker();
+      fTracked = true;
     } 
     else if (key == amplitude.updateKey) {
       amplitude.setTracker();
+      aTracked = true;
     }
   }
 }
@@ -107,7 +122,6 @@ void mouseClicked() {
     if (selectT.clicked()) {
       app = THEREMIN;
       state = TRACK_WIZARD;
-      theremin = new Theremin();
     }
 //    if (selectD.clicked()) {
 //      app = DRUMS;
