@@ -19,9 +19,11 @@ class Cymbal {
   }
 
   void checkColl(ColourTracker tracker) {
+    //Sees if the lines intersect
     if (lineIntersection(tracker)) {
+      //if they do then grab the veloctiy (for amplitude)
       float velocity = tracker.position.dist(tracker.erstwhilePosition);
-      println(ident);
+      //And play the sound
       sound.play(0);
     }
   }
@@ -49,14 +51,19 @@ class Cymbal {
       //We know where the lines intersect so we now need to check to see if that point is on the line.
       //Logic taken from http://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line
 
+      //This is the point where the two lines meet
       PVector intersection = new PVector(interX, interY);
+      //This is a vector for the end of the object
       PVector endOfLine = new PVector(position.x+width, position.y);
 
+      //If the point is both on the line of the object and the tracker we have a drum hit.
       if ((tracker.position.dist(intersection)+(tracker.erstwhilePosition.dist(intersection)) == tracker.position.dist(tracker.erstwhilePosition)) && ((this.position.dist(intersection)+(endOfLine.dist(intersection)) == this.position.dist(endOfLine)))) {
-        println("XY1 = " + x1 + " " + y1 + " XY2 = " + x2 + " " + y2 + "XY3 = " + x3 + " " + y3 + " XY4 = " + x4 + " " + y4 + " Point = " + interX + " "  + interY);
+        //So return true
         return true;
       }
     }
+    //No coll so return false
     return false;
   }
 }
+
