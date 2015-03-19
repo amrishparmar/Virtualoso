@@ -3,15 +3,19 @@ class ColourTracker {
   PVector position;
   PVector erstwhilePosition;
   char updateKey;
+  boolean setUp;
 
   ColourTracker(char key) {
     setTracker();
     updateKey = key;
+    setUp = false;
   }
 
   void track() {
-    updatePosition();
-    displayTracker();
+    if (setUp) {
+      updatePosition();
+      displayTracker();
+    }
   }
 
   void updatePosition() {
@@ -23,16 +27,14 @@ class ColourTracker {
     int closestY = 0;
 
     // Begin loop to walk through every pixel
-    for (int x = 0; x < cam.width; x++) {
-      for (int y = 0; y < cam.height; y++) {
-        int loc = x + y * cam.width;
+    for (int x = 0; x < cam.width; x ++ ) {
+      for (int y = 0; y < cam.height; y ++ ) {
+        int loc = x + y*cam.width;
         // What is current color
-        color currentColour = cam.pixels[loc];
-        // get componenets of currentColor
-        float r1 = red(currentColour);
-        float g1 = green(currentColour);
-        float b1 = blue(currentColour);
-        // get components of trackingColour
+        color currentColor = cam.pixels[loc];
+        float r1 = red(currentColor);
+        float g1 = green(currentColor);
+        float b1 = blue(currentColor);
         float r2 = red(trackingColour);
         float g2 = green(trackingColour);
         float b2 = blue(trackingColour);
@@ -50,9 +52,9 @@ class ColourTracker {
         }
       }
     }
-    if (worldRecord < 20) {
+    if (worldRecord < 10) {
       erstwhilePosition = position;
-      position = new PVector(width - closestX, closestY);
+      position = new PVector(width-closestX, closestY);
     }
   }
 
@@ -62,8 +64,9 @@ class ColourTracker {
   }
 
   void setTracker() {
-    int loc = (width - mouseX) + mouseY * cam.width;
+    int loc = (width-mouseX) + mouseY*(cam.width);
     trackingColour = cam.pixels[loc];
     position = new PVector(mouseX, mouseY);
+    setUp = true;
   }
 }
