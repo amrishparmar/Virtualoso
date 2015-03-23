@@ -13,53 +13,72 @@ class ColourTracker {
   }
 
   void track() {
+    //We only display when things are setup
     if (setUp) {
+      //First we update the position
       updatePosition();
+      //Then we display a dot at that location 
       displayTracker();
     }
   }
 
   void updatePosition() {
+    //This was initally based on a simple colour tracker created by Daniel Shiffman (http://www.learningprocessing.com/examples/chapter-16/example-16-11/)
+    //But since then it has been heavily modified to create a smoother tracker (by averaging the location) 
+    
+    //This tracks all of the 'hits' we have and starts off blank every frame
     currentPositions = new ArrayList<PVector>();
-    // Begin loop to walk through every pixel
+    // Loop through every pixel
     for (int x = 0; x < cam.width; x++ ) {
       for (int y = 0; y < cam.height; y++ ) {
         int loc = x + y*cam.width;
-        // What is current color
-        color currentColor = cam.pixels[loc];
-        float r1 = red(currentColor);
-        float g1 = green(currentColor);
-        float b1 = blue(currentColor);
+        //Get the current colour
+        color currentColour = cam.pixels[loc];
+        ///break it and the tracker colour into rgb vals
+        float r1 = red(currentColour);
+        float g1 = green(currentColour);
+        float b1 = blue(currentColour);
         float r2 = red(trackingColour);
         float g2 = green(trackingColour);
         float b2 = blue(trackingColour);
 
-        // Using euclidean distance to compare colors
-        float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function
-        // to compare the current color with the color we are tracking.
+        // Using euclidean distance to compare colors (from Shiffman's implmentation)
+        float d = dist(r1, g1, b1, r2, g2, b2); 
 
+        //if it is less than 15 away from what we want we have a hit
         if (d < 15) {
+          //So create a vector to the location
           PVector location = new PVector(width-x, y);
+          //And store in the current positions
           currentPositions.add(location);
         }
       }
     }
+    //Once we have vectors to all of the locations were we have a hit we can average them
+    //Start with an empty vect
     PVector centre = new PVector(0, 0);
     for (int i = 0; i < currentPositions.size (); i++) {
+      //Add all of the hits to it
       centre.add(currentPositions.get(i));
     }
+    //And divide by the number of hits
     centre.mult(1.0f/currentPositions.size());
+    //The old position is now the position
     erstwhilePosition = position;
+    //And the position is this new centre vector
     position = centre;
   }
 
 
   void displayTracker() {
+    //We fill the ellipse with the tracking colour
     fill(trackingColour);
+    //And draw it at the location
     ellipse(position.x, position.y, 5, 5);
   }
 
   void setTracker() {
+    //This sets up the colour tracker
     int loc = (width-mouseX) + mouseY*(cam.width);
     trackingColour = cam.pixels[loc];
     position = new PVector(mouseX, mouseY);

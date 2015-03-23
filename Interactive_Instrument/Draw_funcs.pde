@@ -10,12 +10,14 @@ void drawMenu() {
 
 // draw wizard instructions for theremin
 void drawInstructionsT() {
+  fill(0);
   textSize(24);
   text("Press A to set volume tracker", width/2, 25);
   text("Press F to set pitch tracker", width/2, 50);
 }
 
 void drawInstructionsD() {
+  fill(0);
   textSize(24);
   text("Press L to set left stick", width/2, 25);
   text("Press R to set right stick", width/2, 50);
@@ -25,8 +27,8 @@ void drawInstructionsD() {
 void drawCam() {
   // reverse the image so it acts like a mirror
   pushMatrix();
-    scale(-1, 1);
-    image(cam, -width, 0);
+  scale(-1, 1);
+  image(cam, -width, 0);
   popMatrix();
 }
 
@@ -42,3 +44,4 @@ void drawStats() {
   // y pos
   text("Y: "+frequency.position.y, 10, 60);
 }
+
