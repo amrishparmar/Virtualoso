@@ -4,6 +4,7 @@ class ColourTracker {
   PVector erstwhilePosition;
   char updateKey;
   boolean setUp;
+  ArrayList<PVector> currentPositions;
 
   ColourTracker(char key) {
     setTracker();
@@ -19,16 +20,10 @@ class ColourTracker {
   }
 
   void updatePosition() {
-    // Before we begin searching, the "world record" for closest color is set to a high number that is easy for the first pixel to beat.
-    float worldRecord = 500; 
-
-    // XY coordinate of closest color
-    int closestX = 0;
-    int closestY = 0;
-
+    currentPositions = new ArrayList<PVector>();
     // Begin loop to walk through every pixel
-    for (int x = 0; x < cam.width; x ++ ) {
-      for (int y = 0; y < cam.height; y ++ ) {
+    for (int x = 0; x < cam.width; x++ ) {
+      for (int y = 0; y < cam.height; y++ ) {
         int loc = x + y*cam.width;
         // What is current color
         color currentColor = cam.pixels[loc];
@@ -43,20 +38,21 @@ class ColourTracker {
         float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function
         // to compare the current color with the color we are tracking.
 
-        // If current color is more similar to tracked color than
-        // closest color, save current location and current difference
-        if (d < worldRecord) {
-          worldRecord = d;
-          closestX = x;
-          closestY = y;
+        if (d < 15) {
+          PVector location = new PVector(width-x, y);
+          currentPositions.add(location);
         }
       }
     }
-    if (worldRecord < 10) {
-      erstwhilePosition = position;
-      position = new PVector(width-closestX, closestY);
+    PVector centre = new PVector(0, 0);
+    for (int i = 0; i < currentPositions.size (); i++) {
+      centre.add(currentPositions.get(i));
     }
+    centre.mult(1.0f/currentPositions.size());
+    erstwhilePosition = position;
+    position = centre;
   }
+
 
   void displayTracker() {
     fill(trackingColour);
@@ -70,3 +66,4 @@ class ColourTracker {
     setUp = true;
   }
 }
+

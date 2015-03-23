@@ -8,9 +8,12 @@ Minim minim;
 Capture cam;
 
 Theremin theremin;
+DrumKit drumkit;
 
 ColourTracker frequency;
 ColourTracker amplitude;
+ColourTracker leftStick;
+ColourTracker rightStick;
 
 int state; // current state of program
 int app; // current program we are in - theremin or drums  
@@ -24,16 +27,12 @@ final int IN_PROGRAM = 2;
 final int THEREMIN = 0;
 final int DRUMS = 1;
 
-// monitor whether the wizard has been completed
-boolean fTracked = false;
-boolean aTracked = false;
-
 Button selectD;
 Button selectT;
 
 void setup() {
   size(640, 480);
-  
+
   // instantiate minim audio library
   minim = new Minim(this);
 
@@ -45,15 +44,17 @@ void setup() {
     println("There are no cameras available for capture.");
     exit();
   }
-  
+
   // begin capturing
   cam = new Capture(this, 640, 480, 30);
   cam.start();
-  
+
   // create new colour trackers
   frequency = new ColourTracker('f'); // frequency
   amplitude = new ColourTracker('a'); // amplitude
-  
+  leftStick = new ColourTracker('l'); //Left drum stick
+  rightStick = new ColourTracker('r'); //Right drum stick
+
   selectD = new Button(width/2, 225, 350, 75, "Play the drums");
   selectT = new Button(width/2, 350, 350, 75, "Play the theremin");
 }
@@ -68,51 +69,68 @@ void stop() {
 void draw() {
   if (state == MAIN_MENU) {
     drawMenu();
-  }
-  else if (state > 0) { 
+  } else if (state > 0) { 
     // read data from camera and display on screen
     if (cam.available() == true) {
       cam.read();
     }
     drawCam();
     drawStats();
-  
+
     // load pixels from camera - needed for colour tracker
     cam.loadPixels();
-    
+
     if (app == THEREMIN) {
       // track colours
       frequency.track();
       amplitude.track();
-      
+
       if (state == TRACK_WIZARD) {
         drawInstructionsT();
-        if (aTracked && fTracked) {
+        if (amplitude.setUp && frequency.setUp) {
           state = IN_PROGRAM;
           theremin = new Theremin(); // instantiate the theremin
         }
-      }
-      else if (state == IN_PROGRAM) {
+      } else if (state == IN_PROGRAM) {
         // update the pitch and volume based on position of colour trackers
         theremin.updateSound(frequency, amplitude);
       }
-    }
-    else { // drums
-      // code for drum kit goes here
+    } else { // drums
+      leftStick.track();
+      rightStick.track();
+
+      if (state == TRACK_WIZARD) {
+        drawInstructionsD();
+        if (leftStick.setUp && rightStick.setUp) {
+          println("Set up complete");
+          drumkit = new DrumKit();
+          state = IN_PROGRAM;
+        }
+      } else if (state == IN_PROGRAM) {
+        println("DRUMS");
+        drumkit.drawKit();
+        drumkit.checkForHit(leftStick);
+        drumkit.checkForHit(rightStick);
+      }
     }
   }
 }
+
+
 
 // set the colour trackers with a keypress
 void keyPressed() {
   if (state > 0 && app == THEREMIN) {
     if (key == frequency.updateKey) {
       frequency.setTracker();
-      fTracked = true;
-    } 
-    else if (key == amplitude.updateKey) {
+    } else if (key == amplitude.updateKey) {
       amplitude.setTracker();
-      aTracked = true;
+    }
+  } else if  (state > 0 && app == DRUMS) {
+    if (key == leftStick.updateKey) {
+      leftStick.setTracker();
+    } else if (key == rightStick.updateKey) {
+      rightStick.setTracker();
     }
   }
 }
@@ -123,9 +141,10 @@ void mouseClicked() {
       app = THEREMIN;
       state = TRACK_WIZARD;
     }
-//    if (selectD.clicked()) {
-//      app = DRUMS;
-//      state = TRACK_WIZARD;
-//    }
+    if (selectD.clicked()) {
+      app = DRUMS;
+      state = TRACK_WIZARD;
+    }
   }
 }
+

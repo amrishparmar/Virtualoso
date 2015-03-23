@@ -15,6 +15,12 @@ void drawInstructionsT() {
   text("Press F to set pitch tracker", width/2, 50);
 }
 
+void drawInstructionsD() {
+  textSize(24);
+  text("Press L to set left stick", width/2, 25);
+  text("Press R to set right stick", width/2, 50);
+}
+
 // draws webcam to the screen
 void drawCam() {
   // reverse the image so it acts like a mirror
