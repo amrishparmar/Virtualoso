@@ -16,7 +16,12 @@ class Cymbal {
   void drawCymbal() {
     fill(255, 255, 0);
     rectMode(CORNER);
-    rect(position.x, position.y, width, height);
+    strokeWeight(3);
+    stroke(128);
+    line(position.x+(width/2), position.y+5, position.x+(width/2), 480);
+    strokeWeight(1);
+    stroke(0);
+    ellipse(position.x, position.y, width, height);
   }
 
   void checkColl(ColourTracker tracker) {
