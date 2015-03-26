@@ -45,8 +45,7 @@ void draw() {
     }
     drawCam();
     back.drawButton(color(0), color(255));
-    drawStats();
-
+    
     // load pixels from camera - needed for colour tracker
     cam.loadPixels();
 

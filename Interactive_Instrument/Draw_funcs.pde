@@ -39,16 +39,3 @@ void drawCam() {
   popMatrix();
 }
 
-// draw testing stats on screen
-void drawStats() {
-//  // fps count
-//  fill(0);
-//  textSize(20);
-//  textAlign(LEFT);
-//  text("FPS: "+frameRate, 10, 20);
-//  // x pos
-//  text("X: "+amplitude.position.x, 10, 40);
-//  // y pos
-//  text("Y: "+frequency.position.y, 10, 60);
-}
-
