@@ -22,22 +22,29 @@ void setup() {
   amplitude = new ColourTracker('a'); // amplitude
   leftStick = new ColourTracker('l'); //Left drum stick
   rightStick = new ColourTracker('r'); //Right drum stick
-  
+
   //Buttons for choosing mode
-  selectD = new Button(width/2, 225, 350, 75, "Play the drums");
-  selectT = new Button(width/2, 350, 350, 75, "Play the theremin");
+  selectD = new Button(width/2, 225, 350, 75, "Play the Drums");
+  selectT = new Button(width/2, 350, 350, 75, "Play the Theremin");
+  back = new Button(60, 40, 80, 50, "Back");
+  
+  backgroundImage = loadImage("backgroundImg.png");
+  mainFont = createFont("ChopinScript.otf", 64);
+  inAppFont = createFont("Calibri", 48);
 }
 
 void draw() {
   if (state == MAIN_MENU) {
     //We are on the main menu
     drawMenu();
-  } else { 
+  } else {
+
     //read data from camera and display on screen
     if (cam.available() == true) {
       cam.read();
     }
     drawCam();
+    back.drawButton(color(0), color(255));
     drawStats();
 
     // load pixels from camera - needed for colour tracker
@@ -113,6 +120,9 @@ void mouseClicked() {
       app = DRUMS;
       state = TRACK_WIZARD;
     }
+  } else if (back.clicked()) {
+    returnToMainMenu();
+    state = MAIN_MENU;
   }
 }
 
@@ -123,4 +133,15 @@ void stop() {
   super.stop();
 }
 
+void returnToMainMenu() {
+  if (app == THEREMIN) {
+    frequency.setUp = false;
+    amplitude.setUp = false;
+  }
+  if (app == DRUMS) {
+    leftStick.setUp = false; 
+    rightStick.setUp = false;
+  }
+  state = MAIN_MENU;
+}
 

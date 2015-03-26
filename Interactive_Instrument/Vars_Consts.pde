@@ -29,4 +29,9 @@ final int DRUMS = 1;
 
 Button selectD;
 Button selectT;
+Button back;
+
+PImage backgroundImage;
+PFont mainFont;
+PFont inAppFont;
 

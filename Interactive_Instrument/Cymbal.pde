@@ -2,14 +2,12 @@ class Cymbal {
   PVector position;
   int width;
   int height;
-  char ident;
   AudioPlayer sound;
 
   Cymbal(int x, int y, int newWidth, int newHeight, char newIdent, String path) {
     position = new PVector(x, y);
     width = newWidth;
     height = newHeight;
-    ident = newIdent;
     sound = minim.loadFile(path);
   }
 
