@@ -1,3 +1,13 @@
+/**
+
+  Virtualoso (an interactive instrument application)
+  
+  By Amrish Parmar and Charlie Ringer
+  
+  Submission for Audio-Visual Computing coursework
+
+**/
+
 void setup() {
   size(640, 480);
 
@@ -30,15 +40,15 @@ void setup() {
   
   backgroundImage = loadImage("backgroundImg.png");
   mainFont = createFont("ChopinScript.otf", 64);
-  inAppFont = createFont("Calibri", 48);
+  inAppFont = createFont("Calibri.ttf", 48);
 }
 
 void draw() {
   if (state == MAIN_MENU) {
     //We are on the main menu
     drawMenu();
-  } else {
-
+  } 
+  else {
     //read data from camera and display on screen
     if (cam.available() == true) {
       cam.read();
@@ -62,11 +72,13 @@ void draw() {
           state = IN_PROGRAM;
           theremin = new Theremin(); // instantiate the theremin
         }
-      } else if (state == IN_PROGRAM) {
+      } 
+      else if (state == IN_PROGRAM) {
         // update the pitch and volume based on position of colour trackers
         theremin.updateSound(frequency, amplitude);
       }
-    } else { // drums
+    } 
+    else { // drums
       //track the sticks
       leftStick.track();
       rightStick.track();
@@ -79,7 +91,8 @@ void draw() {
           drumkit = new DrumKit();
           state = IN_PROGRAM;
         }
-      } else if (state == IN_PROGRAM) {
+      } 
+      else if (state == IN_PROGRAM) {
         //draw the drum kit
         drumkit.drawKit();
         //Then check for a hit
@@ -90,20 +103,21 @@ void draw() {
   }
 }
 
-
-
 // set the colour trackers with a keypress
 void keyPressed() {
   if (state > 0 && app == THEREMIN) {
     if (key == frequency.updateKey) {
       frequency.setTracker();
-    } else if (key == amplitude.updateKey) {
+    } 
+    else if (key == amplitude.updateKey) {
       amplitude.setTracker();
     }
-  } else if  (state > 0 && app == DRUMS) {
+  } 
+  else if  (state > 0 && app == DRUMS) {
     if (key == leftStick.updateKey) {
       leftStick.setTracker();
-    } else if (key == rightStick.updateKey) {
+    } 
+    else if (key == rightStick.updateKey) {
       rightStick.setTracker();
     }
   }
@@ -121,7 +135,6 @@ void mouseClicked() {
     }
   } else if (back.clicked()) {
     returnToMainMenu();
-    state = MAIN_MENU;
   }
 }
 
@@ -132,10 +145,12 @@ void stop() {
   super.stop();
 }
 
+// reinitialises and returns the program to the main menu
 void returnToMainMenu() {
   if (app == THEREMIN) {
     frequency.setUp = false;
     amplitude.setUp = false;
+    minim.stop(); // stop the audio bleeding over into the menu
   }
   if (app == DRUMS) {
     leftStick.setUp = false; 

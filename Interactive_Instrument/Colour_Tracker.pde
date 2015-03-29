@@ -1,4 +1,5 @@
 class ColourTracker {
+  
   color trackingColour; 
   PVector position;
   PVector erstwhilePosition;
@@ -11,7 +12,7 @@ class ColourTracker {
     updateKey = key;
     setUp = false;
   }
-
+  
   void track() {
     //We only display when things are setup
     if (setUp) {
@@ -65,11 +66,12 @@ class ColourTracker {
     centre.mult(1.0f/currentPositions.size());
     //The old position is now the position
     erstwhilePosition = position;
+    
     //And the position is this new centre vector
     position = centre;
   }
 
-
+  // draw the tracker to screen as an ellipse
   void displayTracker() {
     //We fill the ellipse with the tracking colour
     fill(trackingColour);
@@ -77,8 +79,8 @@ class ColourTracker {
     ellipse(position.x, position.y, 5, 5);
   }
 
+  // set up the colour tracker
   void setTracker() {
-    //This sets up the colour tracker
     int loc = (width-mouseX) + mouseY*(cam.width);
     trackingColour = cam.pixels[loc];
     position = new PVector(mouseX, mouseY);

@@ -20,7 +20,7 @@ class Button {
     rectMode(CENTER);
     stroke(lineCol);
     textAlign(CENTER, CENTER);
-    textSize(hei-(hei/2));
+    textSize(hei/2);
     // reverse the colours if the mouse is over the button
     if (mouseX > posX - wid/2 && mouseX < posX + wid/2 && mouseY > posY - hei/2 && mouseY < posY + hei/2) {
       fill(lineCol);

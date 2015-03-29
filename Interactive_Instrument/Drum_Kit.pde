@@ -1,7 +1,8 @@
 class DrumKit {
   Drum[] drums;
   Cymbal[] cymbals;
-
+  
+  // constructor
   DrumKit() {
     drums = new Drum[4];
     cymbals = new Cymbal[3];
@@ -13,7 +14,8 @@ class DrumKit {
     cymbals[1] = new Cymbal( 280, 300, 80, 15, 'b', "data/Ride.wav");
     cymbals[2] = new Cymbal( 530, 300, 80, 15, 'c', "data/Crash.wav");
   }
-
+  
+  // draws the the drum kit to the screen
   void drawKit() {
     for (int i = 0; i < drums.length; i++) {
       drums[i].drawDrum();
@@ -22,7 +24,8 @@ class DrumKit {
       cymbals[j].drawCymbal();
     }
   }
-
+  
+  // checks for collision with "drum stick" 
   void checkForHit(ColourTracker tracker) {
     for (int i = 0; i < drums.length; i++) {
       drums[i].checkColl(tracker);

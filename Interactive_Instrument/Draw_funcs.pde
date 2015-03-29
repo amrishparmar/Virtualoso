@@ -1,3 +1,4 @@
+// draw main menu
 void drawMenu() {
   textFont(mainFont);
   background(255);
@@ -21,6 +22,7 @@ void drawInstructionsT() {
   text("Press F to set pitch tracker", width/2, 75);
 }
 
+// draw wizard instructions for drum kit
 void drawInstructionsD() {
   textFont(inAppFont);
   fill(255,255,0);
