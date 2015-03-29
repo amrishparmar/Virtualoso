@@ -2,10 +2,8 @@ class Theremin {
   
   AudioOutput out;
   Oscil wave;
-  float targetFrequency;
-  float targetAmplitude;
-  float prevFrequency;
-  float prevAmplitude;
+  float targetFrequency, prevFrequency;
+  float targetAmplitude, prevAmplitude;
   
   // constructor
   Theremin() {
