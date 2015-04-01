@@ -138,13 +138,6 @@ void mouseClicked() {
   }
 }
 
-void stop() {
-  // tell the audio to stop
-  minim.stop();
-  // call the version of stop defined in our parent class, in case it does anything vital
-  super.stop();
-}
-
 // reinitialises and returns the program to the main menu
 void returnToMainMenu() {
   if (app == THEREMIN) {
