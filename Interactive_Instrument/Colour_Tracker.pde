@@ -5,7 +5,6 @@ class ColourTracker {
   PVector erstwhilePosition;
   char updateKey;
   boolean setUp;
-  ArrayList<PVector> currentPositions;
 
   ColourTracker(char key) {
     setTracker();
@@ -28,7 +27,7 @@ class ColourTracker {
     //But since then it has been heavily modified to create a smoother tracker (by averaging the location) 
     
     //This tracks all of the 'hits' we have and starts off blank every frame
-    currentPositions = new ArrayList<PVector>();
+    ArrayList<PVector> currentPositions = new ArrayList<PVector>();
     // Loop through every pixel
     for (int x = 0; x < cam.width; x++ ) {
       for (int y = 0; y < cam.height; y++ ) {
