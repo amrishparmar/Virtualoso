@@ -1,7 +1,8 @@
 # Virtualoso
-Final Project for Year 1 Audio-Visual Computing module.
 
 A virtual theremin and drum kit. Makes use of an implementation of colour-tracking via a webcam so that a user can make noise.
+
+Coursework project for year 1 "Audio-Visual Computing".
 
 This was a collaboration with [Charlie Ringer](https://github.com/cring002).
 
